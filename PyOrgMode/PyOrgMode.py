@@ -497,9 +497,12 @@ class OrgNode(OrgPlugin):
       
             # Looking for tags
             heading_without_links = re.sub(" \[(.+)\]","",heading[0][3])
-
-            matches = re.finditer(r'(?=:([\w]+):)',heading_without_links)
-            [current.tags.append(match.group(1)) for match in matches]
+            heading_without_title = re.sub(r"^(?:.+)\s+(?=:)", "", heading_without_links)
+            # if no change, there is no residual string that
+            # follows the tag grammar
+            if heading_without_links != heading_without_title:
+                matches = re.finditer(r'(?=:([\w]+):)',heading_without_title)
+                [current.tags.append(match.group(1)) for match in matches]
         else:
             self.treated = False
         return current
